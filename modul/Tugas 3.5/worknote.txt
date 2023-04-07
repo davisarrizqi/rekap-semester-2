@@ -1,0 +1,51 @@
+Batu, Gunting, Kertas
+Ada 2 Pemain
+
+Mengingat ada 3 variabel dan 2 pemain
+Maka peluangnya adalah 3^2
+Maka, ada 9 peluang kemungkinan
+
+
+=== Peluang Kejadian ===
+BB - Batu x Batu
+BG - Batu x Gunting
+BK - Batu x Kertas
+
+GB - Gunting x Batu
+GG - Gunting x Gunting
+GK - Gunting x Kertas
+
+KB - Kertas x Batu
+KG - Kertas x Gunting
+KK - Kertas x Kertas
+=========================
+
+
+=== Peluang Kemenangan ===
+BG - Batu x Gunting
+GK - Gunting x Kertas
+KB - Kertas x Batu
+==========================
+
+=== Peluang Kekalahan ===
+BK - Batu x Kertas
+GB - Gunting x Batu
+KG - Kertas x Gunting
+==========================
+
+== Peluang Menjadi Seri ==
+BB - Batu x Batu
+GG - Gunting x Gunting
+KK - Kertas x Kertas
+==========================
+
+
+Logika Implementasi :
+    1. Memastikan bahwa masing masing kondisi kekalahan, kemenangan,
+    serta seri akan diatur agar bisa menghadapi input pengguna
+
+    2. Karena logika kekalahan sudah diimplementasikan, maka
+    kita perlu memastikan bahwa kondisi seri dan kemenangan diatur
+
+    3. Demi efektivitas dan efisiensi, maka kita Implementasikan dengan
+    cara mengatur hasil menang pada kondisi else
