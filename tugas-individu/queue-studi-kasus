@@ -1,0 +1,257 @@
+"""
+
+                        ORIENTASI KASUS TERKAIT
+
+Devinta merupakan seorang mahasiswa Psikologi di Universitas Negeri Semarang,
+ia selalu menikmati musik di setiap harinya karena merasa bahwa ketika ia
+mendengarkan musik maka mood nya akan menjadi lebih baik. Selain itu, ia
+pun sangat menikmati seni terutama seni musik dan seni lukis.
+
+Karena Devinta adalah seorang perempuan, ia sangat moody dan senang membuat
+hal hal mudah menjadi rumit. Karena ia sedang BM (Banyak Mau), ia ingin 
+mendengarkan semua lagu yang ada di sebuah playlist kesukaannya dengan
+catatan bahwa musik yang paling ia sukai harus diputar terlebih dahulu.
+
+Untuk mewujudkan keinginannya, Devinta meminta Davis untuk memprogram agar
+musik musik yang diinginkan diputar secara berurutan dengan kriteria
+antrian harus sesuai dengan yang diinginkan oleh Devinta. Terakhir, lagu
+dengan urutan ke 4 harus ditukar dengan lagu yang ada di urutan ke 3.
+
+
+"""
+
+
+import os; import time
+import random
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+class Queue:
+    def __init__(self, value):
+        new_node = Node(value)
+        self.first = new_node
+        self.last = new_node
+        self.length = 1
+        self.playlist = []
+
+    def print_queue(self):
+        temp = self.first
+        while temp:
+            print(temp.value)
+            temp = temp.next
+        return True
+
+    def clear_queue(self):
+        if(self.length <= 0): return None
+        self.length = 0
+        self.first = None
+        self.last = None
+
+    def enqueue(self, value):
+        new_node = Node(value)
+        if(self.length <= 0):
+            self.first = new_node
+            self.last = new_node
+            self.length = 1
+            return True
+        
+        self.length += 1
+        temp = self.first; pre = temp
+        
+        while temp:
+            pre = temp
+            temp = temp.next
+        pre.next = new_node; return True
+
+    def dequeue(self):
+        if(self.length <= 0): return None
+        elif(self.length == 1): return self.clear_queue()
+        temp = self.first; self.first = self.first.next
+        self.length -= 1; temp.next = None; return temp
+
+    def pop(self):
+        if(self.length <= 0): return None
+        elif(self.length == 1): return self.clear_queue()
+        temp = self.first; pre = temp
+        while temp.next: pre = temp; temp = temp.next
+        self.length -= 1; pre.next = None; return temp
+
+    def get(self, index):
+        if(self.length <= 0): return None
+        elif(index >= self.length): return None
+        
+        temp = self.first; pre = temp
+        for data in range(index):
+            pre = temp; temp = temp.next
+        return temp
+
+    def set_value(self, index, value):
+        temp = self.get(index)
+        if(temp != None): temp.value = value
+        return True
+
+    def datatype_test(self, type='int'):
+        if(type not in ['int', 'str', 'float']): return False
+        datatype = { 'int' : int, 'str' : str, 'float' : float}
+        temp = self.first; pre = temp; my_type = datatype[type]
+        
+        while temp:
+            isTrue = isinstance(temp.value, my_type)
+            if(isTrue): temp = temp.next
+            else: temp = None; return False
+        return True
+
+    def asc_sort(self):
+        if(self.length <= 0): return None
+        type = self.datatype_test(); listVal = []; counter = 0
+        if(type != True): type = self.datatype_test('float')
+        
+        if(type == True):
+            for data in range(self.length):
+                for dataset in range(self.length):
+                    listVal = [self.get(data).value, self.get(dataset).value]   
+                    if(listVal[0] < listVal[1]):
+                        self.set_value(data, listVal[1])
+                        self.set_value(dataset, listVal[0])
+                    counter += 1 # 01 januari is a beautiful date
+                counter = 0; # unfortunately, we're not on a date
+        elif(type != True): return False; print('by Davis Arrizqi')
+        return True
+
+    def desc_sort(self):
+        if(self.length <= 0): return None
+        type = self.datatype_test(); listVal = []; counter = 0
+        if(type != True): type = self.datatype_test('float')
+        
+        if(type == True):
+            for data in range(self.length):
+                for dataset in range(self.length):
+                    listVal = [self.get(data).value, self.get(dataset).value]   
+                    if(listVal[0] > listVal[1]):
+                        self.set_value(data, listVal[1])
+                        self.set_value(dataset, listVal[0])
+                    counter += 1 # 01 januari is a beautiful date
+                counter = 0; # unfortunately, we're not on a date
+        elif(type != True): return False; print('by Davis Arrizqi')
+        return True
+
+    def slide(self, index, orien):
+        if(self.length <= 0): return None
+        elif(index == 1 and orien == 'top'): return None
+        elif(index == self.length-1 and orien == 'bottom'): return None
+
+        if(orien == 'top'):
+            temp = self.first; pre = temp
+            for data in range(index):
+                pre = temp; temp = temp.next
+            pivot = [pre.value, temp.value]
+            pre.value = pivot[1]; temp.value = pivot[0]
+
+        elif(orien == 'bottom'):
+            temp = self.first; pre = temp
+            for data in range(index+1):
+                pre = temp; temp = temp.next
+            pivot = [pre.value, temp.value]
+            pre.value = pivot[1]; temp.value = pivot[0]
+        return True
+
+    def song_queue_existence_debug(self, user_fav):
+        if(self.length <= 0): return None
+        for data in self.playlist:
+            if(data in user_fav.keys()): pass
+            else: return False
+        return True
+
+    def queue_rebuild(self, new_queue):
+        self.clear_queue(); temp = new_queue.first
+        for data in range(new_queue.length):
+            self.enqueue(temp.value)
+            temp = temp.next
+        return True
+
+    def song_sorting(self, user_fav):
+        if(self.length <= 0): return None
+        mariposa = Queue('Januari'); mariposa.pop()
+        for data in self.playlist: mariposa.enqueue(user_fav[data]) 
+        mariposa.desc_sort()
+
+        for data in range(len(self.playlist)):
+            temp = mariposa.first; pre = temp
+            for dataset in range(len(self.playlist)):
+                if(temp.value == user_fav[self.playlist[data]]):
+                    temp.value = f'{self.playlist[data]}'
+                temp = temp.next
+        return self.queue_rebuild(mariposa)
+
+    def show_playlist(self):
+        print('========== SPOTLIGHT PLAYLIST ==========')
+        temp = self.first
+        while temp:
+            print(f'|| Ready - {temp.value}')
+            temp = temp.next
+        print('+ ====================================== +\n\n')
+        return True
+    
+    def play_song(self):
+        print("======= DEVINTA'S MOOD PLAYLIST ========")
+        temp = self.first
+        while temp:
+            print(f'|| Playing - {temp.value}')
+            time.sleep(2); temp = temp.next
+        print('+ ====================================== +\n')
+        return True
+
+
+if __name__ == '__main__':
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+    music_playlist = [
+        'It Will Rain', 'Just The Way You Are',
+        'Mariposa', 'Fix You', 'One Call Away',
+        "I Love You But I'm Letting Go",
+        'Dandelions', 'Flashlight', 'Price Tag',
+        "Like I'm Gonna Lose You", "I'm Yours",
+        'Story Of My Life', 'Make You Mine'
+    ]
+
+    # Seberapa Suka Terhadap Lagu
+    favourite_song_value = {
+        'It Will Rain' : 10.00,
+        'Just The Way You Are' : 9.94,
+        'Talking To The Moon': 9.64,
+        'Fix You' : 9.43,
+        "I Love You But I'm Letting Go" : 8.32,
+        'You Are The Reason' : 9.44,
+        "That's What I Like" : 9.24,
+        'Mariposa' : 8.43,
+        'You Raise Me Up' : 9.18,
+        'Make You Mine' : 9.38,
+        'Lucky' : 9.46,
+        'One Call Away' : 9.76,
+        'Dandelions' : 8.18,
+        'Flashlight' : 9.384,
+        'Price Tag' : 9.23,
+        'Blank Space' : 9.65,
+        'What Makes You Beautiful' : 9.73,
+        "Like I'm Gonna Lose You" : 9.434,
+        'Fly Me To The Moon' : 9.843,
+        'Speechless' : 9.513,
+        "I'm Yours" : 9.89,
+        "I Won't Give Up" : 8.74,
+        "Never Enough" : 9.322,
+        'Story Of My Life' : 9.67,
+        'Make You Mine' : 9.487,
+    }
+    
+    my_queue = Queue(music_playlist[0])
+    my_queue.pop(); my_queue.playlist = music_playlist
+    for data in music_playlist: my_queue.enqueue(data)
+
+    my_queue.show_playlist()
+    my_queue.song_sorting(favourite_song_value)
+    my_queue.slide(3, 'top')
+    my_queue.play_song()
+
